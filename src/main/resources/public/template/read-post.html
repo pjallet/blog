@@ -1,11 +1,12 @@
-<h2 ng-click="post.slided = post.slided ? false : true ">
+<h2 ng-click="openClosePost(blog, post)">
 	<span ng-if="post.state !== 'PUBLISHED'" class="warning-text">[[lang.translate(post.state.toLowerCase())]]</span>
 	[[post.title]]<i class="small-arrow"></i>
 	<strong class="subtitle"><i18n>blog.by</i18n> <a ng-href="/userbook/annuaire#/user-view/[[post.author.userId]]">[[post.author.username]]</a> <i18n>blog.on.date</i18n> [[post.modified.format('dddd DD MMMM YYYY')]]</strong>
 </h2>
-<div class="row" slide="post.slided">
-	<div bind-html="post.content"> </div>
+<div ng-if="post.slided">
+    <div bind-html="post.content"> </div>
 </div>
+
 
 <div class="row">
 	<div class="cell twelve-mobile">

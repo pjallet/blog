@@ -163,6 +163,16 @@ function BlogController($scope, route, model, $location, date){
 		}
 	});
 
+	$scope.openClosePost = function (blog, post) {
+	    if (post.slided) {
+	        post.slided = false;
+	        $scope.redirect('/view/' + blog._id);
+	    }
+	    else {
+	        $scope.redirect('/view/' + blog._id + '/' + post._id);
+	    }
+	}
+
 	$scope.display = {
 		filters: {
 			submitted: true,
