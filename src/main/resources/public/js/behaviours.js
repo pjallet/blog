@@ -40,7 +40,11 @@ Behaviours.register('blog', {
 			}
 
 			this.collection(Behaviours.applicationsBehaviours.blog.model.Post, {
-				sync: function(){
+			    sync: function () {
+			        if (this.postsLoading) {
+			            return;
+			        }
+			        this.postsLoading = true;
 					var all = [];
 					http().get('/blog/post/list/all/' + that._id).done(function(posts){
 						all = all.concat(posts);
@@ -54,6 +58,7 @@ Behaviours.register('blog', {
 									return item;
 								});
 								this.load(all);
+								this.postsLoading = false;
 							}.bind(this));
 						}.bind(this));
 					}.bind(this))
@@ -84,9 +89,14 @@ Behaviours.register('blog', {
 		},
 		App: function(){
 			this.collection(Behaviours.applicationsBehaviours.blog.model.Blog, {
-				sync: function(cb){
+			    sync: function (cb) {
+			        if (this.blogsLoading) {
+			            return;
+			        }
+			        this.blogsLoading = true;
 					http().get('/blog/list/all').done(function(blogs) {
-						this.load(blogs);
+					    this.load(blogs);
+					    this.blogsLoading = false;
 						if(typeof cb === "function"){
 							cb();
 						}
