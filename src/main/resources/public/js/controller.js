@@ -255,6 +255,12 @@ function BlogController($scope, route, model, $location, date){
 		}
 	};
 
+    $scope.setDraftCb = function(post){
+        post.state = "DRAFT"
+        if(!$scope.$$phase)
+            $scope.$apply()
+    }
+
 	function initMaxResults(){
 		$scope.maxResults = 3;
 	}
