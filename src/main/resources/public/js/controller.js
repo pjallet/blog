@@ -47,14 +47,13 @@ function BlogController($scope, route, model, $location, date){
 				else{
                     template.open('main', 'blog');
         			template.close('create-post');
-					$scope.blog.one('posts.sync', function(){
-						$scope.blog.posts.forEach(function(post){
-							post.comments.sync();
-						});
-					});
-					if($scope.blog.posts.length()){
-						$scope.blog.posts.trigger('sync');
-					}
+                    if($scope.blog.posts.length() < 1){
+    					$scope.blog.posts.syncPosts(function(){
+                            $scope.blog.posts.forEach(function(post){
+    							post.comments.sync();
+    						});
+                        });
+                    }
 				}
 			});
 			if(!model.blogs.length()){
@@ -72,11 +71,26 @@ function BlogController($scope, route, model, $location, date){
 				}
 				else{
                     template.open('main', 'blog');
-					$scope.blog.posts.sync();
-					$scope.blog.one('posts.sync', function(){
-						setTimeout(function(){
-							window.print();
-						}, 1000);
+					$scope.blog.posts.syncPosts(function(){
+                        var countDown = $scope.blog.posts.length();
+                        var onFinish = function(){
+                            if(--countDown <= 0){
+                                $scope.$apply();
+        						setTimeout(function(){
+        							window.print();
+        						}, 1000);
+                            }
+                        };
+
+                        if(countDown === 0){
+                            onFinish();
+                        }
+                        $scope.blog.posts.forEach(function(post){
+                            post.open(function(){
+                                onFinish();
+                            });
+                        });
+
 					});
 				}
 			});
@@ -95,21 +109,29 @@ function BlogController($scope, route, model, $location, date){
                     template.open('main', 'blog');
 					$scope.blog.one('posts.sync', function(){
 						$scope.blog.posts.forEach(function(post){
-							post.comments.sync();
-							if(post._id === params.postId)
-								post.slided = true;
+							if(post._id === params.postId){
+                                post.open(function(){
+                                    post.slided = true;
+                                    post.comments.sync();
+                                    $scope.$apply();
+                                });
+                            } else {
+                                post.slided = false;
+                            }
 						});
 					});
 					if(!$scope.blog.posts.length()){
-						$scope.blog.posts.sync();
+						$scope.blog.posts.syncPosts();
 					} else {
 						$scope.blog.posts.forEach(function(post){
-							if(post._id === params.postId)
-								post.slided = true;
-							else
+							if(post._id === params.postId){
+								post.open(function(){
+                                    post.slided = true;
+                                    $scope.$apply();
+                                });
+                            } else
 								post.slided = false;
 						});
-						$scope.$apply();
 					}
 				}
 			});
@@ -171,7 +193,14 @@ function BlogController($scope, route, model, $location, date){
 	    else {
 	        $scope.redirect('/view/' + blog._id + '/' + post._id);
 	    }
-	}
+	};
+
+    $scope.openFirstPost = function(blog, post){
+        post.slided = true;
+        post.open(function(){
+            $scope.$apply();
+        });
+    };
 
 	$scope.display = {
 		filters: {
@@ -238,7 +267,7 @@ function BlogController($scope, route, model, $location, date){
 		}
 		$scope.post.save(function(){
 			$location.path('/view/' + $scope.blog._id);
-			$scope.blog.posts.sync();
+			//$scope.blog.posts.syncPosts();
 		}, $scope.blog, 'DRAFT');
 		notify.info('draft.saved');
 	};
@@ -250,7 +279,7 @@ function BlogController($scope, route, model, $location, date){
 		else{
 			$scope.post.save(function(){
 				$location.path('/view/' + $scope.blog._id + '/' + $scope.post._id);
-				$scope.blog.posts.sync();
+				//$scope.blog.posts.syncPosts();
 			}, $scope.blog)
 		}
 	};

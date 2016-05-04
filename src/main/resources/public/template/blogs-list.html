@@ -25,7 +25,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="cell-ellipsis" ng-repeat="post in blog.posts.all|limitTo:2">
+			<div class="cell-ellipsis" ng-repeat="post in blog.fetchPosts | limitTo:2">
 				<em>[[post.title]]</em> <i>[[post.created.fromNow()]]</i>
 			</div>
 		</div>

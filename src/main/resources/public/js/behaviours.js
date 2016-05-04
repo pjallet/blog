@@ -34,33 +34,30 @@ Behaviours.register('blog', {
 					this.icon = data.thumbnail + '?thumbnail=290x290';
 				}
 				else{
-					this.icon = '/img/illustrations/blog.png'
+					this.icon = '/img/illustrations/blog.png';
 				}
 				this.updateData(data);
+                this.fetchPosts = _.map(this.fetchPosts, function(post){
+                    return new Post(post);
+                });
 			}
 
 			this.collection(Behaviours.applicationsBehaviours.blog.model.Post, {
-			    sync: function () {
+			    syncPosts: function (cb) {
 			        if (this.postsLoading) {
 			            return;
 			        }
 			        this.postsLoading = true;
-					var all = [];
 					http().get('/blog/post/list/all/' + that._id).done(function(posts){
-						all = all.concat(posts);
-						http().get('/blog/post/list/all/' + that._id, { state: 'SUBMITTED'}).done(function(posts){
-							all = all.concat(posts);
-							http().get('/blog/post/list/all/' + that._id, { state: 'DRAFT'}).done(function(posts){
-								all = all.concat(posts);
-								all = all.map(function(item){
-									item.blogId = data._id;
-									item['publish-type'] = data['publish-type'];
-									return item;
-								});
-								this.load(all);
-								this.postsLoading = false;
-							}.bind(this));
-						}.bind(this));
+						posts.map(function(item){
+							item.blogId = data._id;
+							item['publish-type'] = data['publish-type'];
+							return item;
+						});
+						this.load(posts);
+						this.postsLoading = false;
+                        if(typeof cb === 'function')
+                            cb();
 					}.bind(this))
 			        .e401(function () { })
 			        .e404(function () { });
@@ -147,6 +144,14 @@ Behaviours.register('blog', {
 					this.create(fn);
 				}
 			};
+
+            this.Post.prototype.open = function(cb){
+                http().get('/blog/post/' + this.blogId + '/' + this._id, {state: this.state}).done(function(data){
+                    this.content = data.content;
+                    if(typeof cb === 'function')
+                        cb();
+                }.bind(this));
+            };
 
 			this.Post.prototype.submit = function(callback){
 				this.state = 'SUBMITTED';

@@ -13,8 +13,10 @@ import fr.wseduc.webutils.request.RequestUtils;
 import org.entcore.blog.Blog;
 import org.entcore.blog.services.BlogService;
 import org.entcore.blog.services.BlogTimelineService;
+import org.entcore.blog.services.PostService;
 import org.entcore.blog.services.impl.DefaultBlogService;
 import org.entcore.blog.services.impl.DefaultBlogTimelineService;
+import org.entcore.blog.services.impl.DefaultPostService;
 import org.entcore.common.events.EventStore;
 import org.entcore.common.events.EventStoreFactory;
 import org.entcore.common.http.request.ActionsUtils;
@@ -25,6 +27,7 @@ import org.entcore.common.share.impl.MongoDbShareService;
 import fr.wseduc.webutils.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.entcore.common.user.UserUtils;
 import org.entcore.common.user.UserInfos;
@@ -44,6 +47,7 @@ import org.vertx.java.platform.Container;
 public class BlogController extends BaseController {
 
 	private BlogService blog;
+	private PostService postService;
 	private BlogTimelineService timelineService;
 	private ShareService shareService;
 	private EventStore eventStore;
@@ -54,6 +58,7 @@ public class BlogController extends BaseController {
 		super.init(vertx, container, rm, securedActions);
 		MongoDb mongo = MongoDb.getInstance();
 		this.blog = new DefaultBlogService(mongo);
+		this.postService = new DefaultPostService(mongo);
 		this.timelineService = new DefaultBlogTimelineService(vertx, eb, container, new Neo(vertx, eb, log), mongo);
 		final Map<String, List<String>> groupedActions = new HashMap<>();
 		groupedActions.put("manager", loadManagerActions(securedActions.values()));
@@ -166,7 +171,44 @@ public class BlogController extends BaseController {
 			@Override
 			public void handle(final UserInfos user) {
 				if (user != null) {
-					blog.list(user, arrayResponseHandler(request));
+					blog.list(user, new Handler<Either<String,JsonArray>>() {
+						public void handle(Either<String, JsonArray> event) {
+							if(event.isLeft()){
+								arrayResponseHandler(request).handle(event);;
+								return;
+							}
+
+							final JsonArray blogs = event.right().getValue();
+
+							if(blogs.size() < 1){
+								renderJson(request, new JsonArray());
+								return;
+							}
+
+							final AtomicInteger countdown = new AtomicInteger(blogs.size());
+							final VoidHandler finalHandler = new VoidHandler() {
+								protected void handle() {
+									if(countdown.decrementAndGet() <= 0){
+										renderJson(request, blogs);
+									}
+								}
+							};
+
+							for(Object blogObj : blogs){
+								final JsonObject blog = (JsonObject) blogObj;
+
+								postService.list(blog.getString("_id"), PostService.StateType.PUBLISHED, user, 2, new Handler<Either<String,JsonArray>>() {
+									public void handle(Either<String, JsonArray> event) {
+										if(event.isRight()){
+											blog.putArray("fetchPosts", event.right().getValue());
+										}
+										finalHandler.handle(null);
+									}
+								});
+							}
+
+						}
+					});
 				} else {
 					unauthorized(request);
 				}

@@ -26,7 +26,8 @@ public interface PostService {
 
 	void get(String blogId, String postId, StateType state, Handler<Either<String, JsonObject>> result);
 
-	void list(String blogId, StateType state, UserInfos user, Handler<Either<String, JsonArray>> result);
+	void list(String blogId, UserInfos user, int limit, Handler<Either<String, JsonArray>> result);
+	void list(String blogId, StateType state, UserInfos user, int limit, Handler<Either<String, JsonArray>> result);
 
 	void submit(String blogId, String postId, UserInfos user, Handler<Either<String, JsonObject>> result);
 

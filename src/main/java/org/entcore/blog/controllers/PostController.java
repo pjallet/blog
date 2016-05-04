@@ -137,8 +137,12 @@ public class PostController extends BaseController {
 			@Override
 			public void handle(final UserInfos user) {
 				if (user != null) {
-					post.list(blogId, BlogResourcesProvider.getStateType(request),
-							user, arrayResponseHandler(request));
+					if(request.params().get("state") == null){
+						post.list(blogId, user, 0, arrayResponseHandler(request));
+					} else {
+						post.list(blogId, BlogResourcesProvider.getStateType(request),
+							user, 0, arrayResponseHandler(request));
+					}
 				} else {
 					unauthorized(request);
 				}
