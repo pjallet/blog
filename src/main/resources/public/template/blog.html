@@ -1,7 +1,7 @@
 <div class="row">
 	<side-panel class="zero-mobile">
-		<h2><i18n>blog.list.title</i18n></h2>
 		<nav class="vertical">
+			<h2><i18n>blog.list.title</i18n></h2>
 			<ul>
 				<li ng-repeat="currBlog in blogs.all">
 					<a ng-class="{'selected': currBlog._id === blog._id}" ng-href="#/view/[[currBlog._id]]">[[currBlog.title]]</a>
@@ -41,13 +41,23 @@
 			</div>
 		</nav>
 
-		<ul stick-to-top class="hash-magnet floating-navigation zero-mobile">
+		<!-- <ul stick-to-top class="hash-magnet floating-navigation zero-mobile">
 			<li ng-repeat="post in blog.posts.all" ng-click="redirect('/view/' + blog._id + '/' + post._id)" ng-init="$first ? openFirstPost(blog, post) : ''">
 				<a>
 					[[post.title]]
 				</a>
 			</li>
-		</ul>
+		</ul> -->
+
+		<floating-navigation class="zero-mobile">
+			<ul>
+				<li ng-repeat="post in blog.posts.all" ng-click="redirect('/view/' + blog._id + '/' + post._id)" ng-init="$first ? openFirstPost(blog, post) : ''">
+					<a>
+						[[post.title]]
+					</a>
+				</li>
+			</ul>
+		</floating-navigation>
 	</div>
 
 	<div class="margin-three main-col">
