@@ -52,6 +52,7 @@ Behaviours.register('blog', {
 						posts.map(function(item){
 							item.blogId = data._id;
 							item['publish-type'] = data['publish-type'];
+                            item['firstPublishDate'] = item['firstPublishDate'] || item['modified']
 							return item;
 						});
 						this.load(posts);

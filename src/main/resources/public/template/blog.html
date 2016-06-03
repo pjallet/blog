@@ -88,7 +88,7 @@
 			<div class="row">
 				<container template="create-post"></container>
 			</div>
-			<div class="hash-magnet twelve cell" ng-repeat="post in blog.posts.all | filter:applyFilters" id="/view/[[blog._id]]/[[post._id]]">
+			<div class="hash-magnet twelve cell" ng-repeat="post in blog.posts.all | filter:applyFilters | orderBy:'-firstPublishDate.$date'" id="/view/[[blog._id]]/[[post._id]]">
 				<article ng-if="post.editing">
 					<container template="edit-post"></container>
 				</article>

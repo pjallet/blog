@@ -8,6 +8,8 @@ import fr.wseduc.mongodb.MongoUpdateBuilder;
 import org.entcore.blog.services.BlogService;
 import org.entcore.blog.services.PostService;
 import fr.wseduc.webutils.*;
+
+import org.entcore.common.mongodb.MongoDbResult;
 import org.entcore.common.user.UserInfos;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.Message;
@@ -30,7 +32,8 @@ public class DefaultPostService implements PostService {
 			.putNumber("state", 1)
 			.putNumber("created", 1)
 			.putNumber("modified", 1)
-			.putNumber("views", 1);
+			.putNumber("views", 1)
+			.putNumber("firstPublishDate", 1);
 
 	public DefaultPostService(MongoDb mongo) {
 		this.mongo = mongo;
@@ -256,16 +259,28 @@ public class DefaultPostService implements PostService {
 	}
 
 	@Override
-	public void publish(String blogId, String postId, final Handler<Either<String, JsonObject>> result) {
+	public void publish(final String blogId, final String postId, final Handler<Either<String, JsonObject>> result) {
 		QueryBuilder query = QueryBuilder.start("_id").is(postId).put("blog.$id").is(blogId);
 		MongoUpdateBuilder updateQuery = new MongoUpdateBuilder().set("state", StateType.PUBLISHED.name());
 		mongo.update(POST_COLLECTION, MongoQueryBuilder.build(query), updateQuery.build(),
-				new Handler<Message<JsonObject>>() {
-			@Override
-			public void handle(Message<JsonObject> res) {
-				result.handle(Utils.validResult(res));
+				MongoDbResult.validActionResultHandler(new Handler<Either<String,JsonObject>>() {
+			public void handle(Either<String, JsonObject> event) {
+				if(event.isLeft()){
+					result.handle(event);
+					return;
+				}
+
+				QueryBuilder query = QueryBuilder
+					.start("_id").is(postId)
+					.put("blog.$id").is(blogId)
+					.put("firstPublishDate").exists(false);
+
+				MongoUpdateBuilder updateQuery = new MongoUpdateBuilder().set("firstPublishDate", MongoDb.now());
+
+				mongo.update(POST_COLLECTION, MongoQueryBuilder.build(query), updateQuery.build(),
+						MongoDbResult.validActionResultHandler(result));
 			}
-		});
+		}));
 	}
 
 	@Override
