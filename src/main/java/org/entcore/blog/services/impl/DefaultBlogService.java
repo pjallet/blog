@@ -38,15 +38,12 @@ public class DefaultBlogService implements BlogService{
 				.putString("userId", author.getUserId())
 				.putString("username", author.getUsername())
 				.putString("login", author.getLogin());
-		JsonObject manager = new JsonObject()
-				.putString("userId", author.getUserId())
-				.putBoolean("manager", true);
 		blog.putObject("created", now)
 				.putObject("modified", now)
 				.putObject("author", owner)
 				.putString("comment-type", commentType.name())
 				.putString("publish-type", publishType.name())
-				.putArray("shared", new JsonArray().addObject(manager));
+				.putArray("shared", new JsonArray());
 		JsonObject b = Utils.validAndGet(blog, FIELDS, FIELDS);
 		if (validationError(result, b)) return;
 		mongo.save(BLOG_COLLECTION, b, new Handler<Message<JsonObject>>() {
