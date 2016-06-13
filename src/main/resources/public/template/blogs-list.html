@@ -13,11 +13,11 @@
 </div>
 <hr class="row" />
 <div class="cards-list rigid-grid">
+
 	<div class="card four" ng-repeat="blog in blogs.all | filter:{ title: display.search } | orderBy:orderBlogs:true" ng-click="redirect('/view/[[blog._id]]')">
 		<div class="row">
 			<div class="illustration">
 				<img skin-src="[[blog.icon]]" class="absolute" />
-				<input type="checkbox" ng-model="blog.selected" ng-click="$event.stopPropagation()" authorize="share" resource="blog" />
 			</div>
 			<div>
 				<h3 ng-click="displayBlog(blog)"><a href="#/view/[[blog._id]]">[[blog.shortenedTitle]]</a></h3>
@@ -29,6 +29,9 @@
 				<em>[[post.title]]</em> <i>[[post.created.fromNow()]]</i>
 			</div>
 		</div>
+		<authorize name="share" resource="blog" >
+			<check-tool ng-model="blog.selected" ng-click="$event.stopPropagation()" ></check-tool>
+		</authorize>
 	</div>
 </div>
 
