@@ -40,16 +40,7 @@
 				</a>
 			</div>
 		</nav>
-
-		<!-- <ul stick-to-top class="hash-magnet floating-navigation zero-mobile">
-			<li ng-repeat="post in blog.posts.all" ng-click="redirect('/view/' + blog._id + '/' + post._id)" ng-init="$first ? openFirstPost(blog, post) : ''">
-				<a>
-					[[post.title]]
-				</a>
-			</li>
-		</ul> -->
-
-		<floating-navigation class="zero-mobile">
+		<floating-navigation class="zero-mobile" ng-if="blog.posts.length() != 0">
 			<ul>
 				<li ng-repeat="post in blog.posts.all" ng-click="redirect('/view/' + blog._id + '/' + post._id)" ng-init="$first ? openFirstPost(blog, post) : ''">
 					<a>
