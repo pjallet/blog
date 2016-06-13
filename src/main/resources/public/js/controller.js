@@ -116,6 +116,7 @@ function BlogController($scope, route, model, $location, date){
                                     $scope.$apply();
                                 });
                             } else {
+                                post.comments.sync();
                                 post.slided = false;
                             }
 						});
