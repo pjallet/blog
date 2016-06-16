@@ -42,7 +42,7 @@
 		</nav>
 		<floating-navigation class="zero-mobile" ng-if="blog.posts.length() != 0">
 			<ul>
-				<li ng-repeat="post in blog.posts.all" ng-click="redirect('/view/' + blog._id + '/' + post._id)" ng-init="$first ? openFirstPost(blog, post) : ''">
+				<li ng-repeat="post in blog.posts.all | filter:applyFilters | orderBy:'-firstPublishDate.$date'" ng-click="redirect('/view/' + blog._id + '/' + post._id)" ng-init="$first ? openFirstPost(blog, post) : ''">
 					<a>
 						[[post.title]]
 					</a>
