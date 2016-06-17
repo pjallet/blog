@@ -25,6 +25,7 @@
     "blog.submitPost": "Soumettre",
     "blog.title": "Blog",
     "blog.list.title": "Autre(s) blog(s)",
+    "blog.posts.list": "Liste des billets du blog",
     "blog.starthere": "Vous pouvez commencer à écrire en cliquant sur ce lien.",
     "blog.title.placeholder": "Entrez le titre de votre blog",
     "blog.unsetImage.caps": "SUPPRIMER L'IMAGE",

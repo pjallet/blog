@@ -40,7 +40,9 @@
 				</a>
 			</div>
 		</nav>
-		<floating-navigation class="zero-mobile" ng-if="blog.posts.length() != 0">
+
+		<h2 class="float-title"><i18n>blog.posts.list</i18n></h2>
+		<floating-navigation title="blog.posts.list" class="zero-mobile" ng-if="blog.posts.length() != 0">
 			<ul>
 				<li ng-repeat="post in blog.posts.all | filter:applyFilters | orderBy:'-firstPublishDate.$date'" ng-click="redirect('/view/' + blog._id + '/' + post._id)" ng-init="$first ? openFirstPost(blog, post) : ''">
 					<a>

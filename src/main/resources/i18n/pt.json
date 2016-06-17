@@ -22,6 +22,7 @@
     "blog.submit": "Validar",
     "blog.submitPost": "Soumettre",
     "blog.title": "Blog",
+    "blog.posts.list": "Liste des billets du blog",
     "blog.title.placeholder": "Escreva o titulo do seu blog",
     "blog.unsetImage.caps": "SUPPRIMER L'IMAGE",
     "cancel": "Cancelar",
