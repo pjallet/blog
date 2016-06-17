@@ -59,12 +59,17 @@ public class DefaultPostService implements PostService {
 				.putObject("blog", blogRef);
 		JsonObject b = Utils.validAndGet(post, FIELDS, FIELDS);
 		if (validationError(result, b)) return;
-		mongo.save(POST_COLLECTION, b, new Handler<Message<JsonObject>>() {
-			@Override
-			public void handle(Message<JsonObject> res) {
-				result.handle(Utils.validResult(res));
+		mongo.save(POST_COLLECTION, b, MongoDbResult.validActionResultHandler(new Handler<Either<String,JsonObject>>() {
+			public void handle(Either<String, JsonObject> event) {
+				if(event.isLeft()){
+					result.handle(event);
+					return;
+				}
+				mongo.findOne(POST_COLLECTION,
+					new JsonObject().putString("_id", event.right().getValue().getString("_id")),
+					MongoDbResult.validResultHandler(result));
 			}
-		});
+		}));
 	}
 
 	@Override

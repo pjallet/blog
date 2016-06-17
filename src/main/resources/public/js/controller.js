@@ -268,7 +268,6 @@ function BlogController($scope, route, model, $location, date){
 		}
 		$scope.post.save(function(){
 			$location.path('/view/' + $scope.blog._id);
-			//$scope.blog.posts.syncPosts();
 		}, $scope.blog, 'DRAFT');
 		notify.info('draft.saved');
 	};
@@ -280,7 +279,6 @@ function BlogController($scope, route, model, $location, date){
 		else{
 			$scope.post.save(function(){
 				$location.path('/view/' + $scope.blog._id + '/' + $scope.post._id);
-				//$scope.blog.posts.syncPosts();
 			}, $scope.blog)
 		}
 	};
