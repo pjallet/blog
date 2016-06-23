@@ -88,5 +88,8 @@
     "sniplet.title": "Blog",
     "submitted": "(Billet soumis)",
     "blog.print": "Imprimer le blog",
-    "blog.sniplet.notfound":  "Ce blog a été supprimé, ou vous n'avez pas les droits d'accès nécessaires."
+    "blog.sniplet.notfound":  "Ce blog a été supprimé, ou vous n'avez pas les droits d'accès nécessaires.",
+    "blog.search.description.none": "Billet intitulé : {0}.",
+    "blog.search.description.one": "Billet intitulé : {0}, dont un message répond à vos critères de recherche.",
+    "blog.search.description.several" : "Billet intitulé : {0}, dont {1} messages répondent à vos critères de recherche."
 }
