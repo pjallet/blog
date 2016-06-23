@@ -26,7 +26,11 @@
 			<div class="twelve cell height-seven">
 				<div class="illustration">
 					<img skin-src="[[blog.icon]]" />
-					<input type="checkbox" ng-model="blog.selected" authorize="share" resource="blog" />
+					<!-- <input type="checkbox" ng-model="blog.selected" authorize="share" resource="blog" /> -->
+
+					<authorize name="share" resource="blog" >
+						<check-tool ng-model="blog.selected"></check-tool>
+					</authorize>
 				</div>
 			</div>
 

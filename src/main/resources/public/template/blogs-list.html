@@ -13,8 +13,7 @@
 </div>
 <hr class="row" />
 <div class="cards-list rigid-grid">
-
-	<div class="card four" ng-repeat="blog in blogs.all | filter:{ title: display.search } | orderBy:orderBlogs:true" ng-click="redirect('/view/[[blog._id]]')">
+	<div class="card four height-two" ng-repeat="blog in blogs.all | filter:{ title: display.search } | orderBy:orderBlogs:true" ng-click="redirect('/view/[[blog._id]]')">
 		<div class="row">
 			<div class="illustration">
 				<img skin-src="[[blog.icon]]" class="absolute" />
@@ -28,13 +27,15 @@
 			<div class="cell-ellipsis" ng-repeat="post in blog.fetchPosts | limitTo:2">
 				<em>[[post.title]]</em> <i>[[post.created.fromNow()]]</i>
 			</div>
+			<div class="reduce-block-eight" ng-if="!blog.fetchPosts.length">
+				<em><i18n>blog.empty</i18n></em>
+			</div>
 		</div>
 		<authorize name="share" resource="blog" >
 			<check-tool ng-model="blog.selected" ng-click="$event.stopPropagation()" ></check-tool>
 		</authorize>
 	</div>
 </div>
-
 
 <lightbox show="display.showShare" on-close="display.showShare = false">
 	<container template="share"></container>
